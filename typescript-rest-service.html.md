@@ -21,9 +21,11 @@ Because our project is an Angular2 - TypeScript project, and Angular2 comes with
 ## Some notes about the REST URLs
 
 The URLs of a REST service can be specified using the following pattern:
-path_of_items/<itemID>/<path_of_subItems>/<subItemID>/...
+
+`path_of_items/<itemID>/<path_of_subItems>/<subItemID>/...`
 
 An example to make it more clearer:
+
 Let's say I want to list all of the Shops in a given City. In this case the base URL can be e.g:
 ```javascript
 /api/cities/12/shops
@@ -319,9 +321,17 @@ export class CityShopsService {
 }
 ```
 
-Maybe we could adjust the `RestService<T>` to be a proper "base-class" of the `CityShopsService`, like `export class CityShopsService extend RestService<Shop>`, and use the super's services directly. In this situation I would have no control on how to exclude some services, for example if I want to have only reading services but no update/patch/delete services, and also, the URL building will be much more complicated and hard to maintain because of the moving parts of the URL (e.g /cities/<cityID>/shops/<shopID>/products/<productID> ...). We can adjust the services to accept open-ended parameter list, but then we need to manage to separate URL building parameters from the updating/deleting object, which also can be confusing. Beside the object which would use the `CityShopsService`'s services won't know the proper signiture of these services, so we would have less descriptive services then now. Same reasons why `RestService` is far from ideal to be used as a [mixin](https://www.typescriptlang.org/docs/handbook/mixins.html)
+Maybe we could adjust the `RestService<T>` to be a proper "base-class" of the `CityShopsService` to use the super's services directly:
 
-So even if the subclasses can be smaller and quicker to implement(would be enough to override only one URL builder function), but the usability and flexibility of the class would pay its price... That is why I decided to use [composition over inheritance](https://en.wikipedia.org/wiki/Composition_over_inheritance).
+```javascript
+export class CityShopsService extend RestService<Shop> {
+...
+}
+``` 
+
+In this situation I would have no control on how to exclude some services, for example if I want to have only reading services but no update/patch/delete services, and also, the URL building will be much more complicated and hard to maintain because of the moving parts of the URL (e.g /cities/\<cityID\>/shops/\<shopID\>/products/\<productID\> ...). We can adjust the services to accept open-ended parameter list, but then we need to manage to separate URL building parameters from the updating/deleting object, which also can be confusing. Beside the object which would use the `CityShopsService`'s services won't know the proper signiture of these services, so we would have less descriptive services then now. Same reasons why `RestService` won't be ideal [mixin](https://www.typescriptlang.org/docs/handbook/mixins.html) either.
+
+So even if the subclasses can be smaller and quick to implement (could be enough to override only one URL builder function), but the usability, flexibility and descriptivity of the class would pay its price... That is why I decided to use [composition over inheritance](https://en.wikipedia.org/wiki/Composition_over_inheritance).
 
 Let's see a simple example on how to use `CityShopsService`. This is the standard way, nothing special here, I won't be including the edit/create features, I will just give you the insights on how the data-driven architecture works by using only the cache (and silently updating it. As you can see, no need to wait for promises, the cached `cityShops` will drive all the changes to the UI.
 
