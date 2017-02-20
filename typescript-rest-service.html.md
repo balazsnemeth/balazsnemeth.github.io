@@ -1,6 +1,6 @@
 
 
-# How to Build a Rest Network Service in TypeScript for Angular2
+# How to Build a REST Network Service in TypeScript for Angular2
 
 ### Goals
 
@@ -369,7 +369,7 @@ export class EventBinsTimelineComponent implements OnInit {
     }
 
     onDeleteShop(shop: Shop) {
-        // Data Driven: the cache will be updated, as a result `cityShops$` will immediately be changed, no need to wait for Promises.
+        // Data Driven: the cache will be updated, so `cityShops$` will "stream" the changes, no need to wait for Promises.
         this.cityShopsService.deleteShop(this.city.id, shop.id);
     }
 
